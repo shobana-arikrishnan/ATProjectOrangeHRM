@@ -41,7 +41,7 @@ class OrangeHRM:
             EC.presence_of_element_located((By.CLASS_NAME, LoginPageLocators().login_error_locator)))
         return error_msg_locator
 
-    def add_employee(self):
+    def add_employee(self, firstname, middlename, lastname, username):
         pim_option = self.wait.until(EC.presence_of_element_located((By.XPATH, DashboardPageLocators().pim_locator)))
         pim_option.click()
         add_employee_option = self.wait.until(
@@ -55,9 +55,9 @@ class OrangeHRM:
             lastname_input = self.wait.until(
                 EC.presence_of_element_located((By.NAME, DashboardPageLocators().lastname_locator)))
 
-            firstname_input.send_keys(EmployeeData().new_user_firstname)
-            middlename_input.send_keys(EmployeeData().new_user_middlename)
-            lastname_input.send_keys(EmployeeData().new_user_lastname)
+            firstname_input.send_keys(firstname)
+            middlename_input.send_keys(middlename)
+            lastname_input.send_keys(lastname)
 
             create_login_details_checkbox = self.wait.until(
                 EC.presence_of_element_located(
@@ -72,9 +72,9 @@ class OrangeHRM:
             confirm_password_input = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().confirm_password_locator)))
 
-            username_input.send_keys(EmployeeData().new_user_username)
-            password_input.send_keys(EmployeeData().new_user_password)
-            confirm_password_input.send_keys(EmployeeData().new_user_password)
+            username_input.send_keys(username)
+            password_input.send_keys(EmployeeData().user_password)
+            confirm_password_input.send_keys(EmployeeData().user_password)
 
             save_button = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().save_button_locator)))
@@ -86,40 +86,21 @@ class OrangeHRM:
 
     def edit_employee(self):
         try:
-            pim_option = self.wait.until(
-                EC.presence_of_element_located((By.XPATH, DashboardPageLocators().pim_locator)))
-            pim_option.click()
-            # employee_list_option = self.wait.until(
-            #     EC.presence_of_element_located((By.XPATH, DashboardPageLocators().employee_list_locator)))
-            # employee_list_option.click()
-            time.sleep(3)
-            employee_name_input = self.wait.until(
-                EC.presence_of_element_located((By.XPATH, DashboardPageLocators().employee_name_locator)))
-            employee_name_input.click()
-            employee_name_input.send_keys(EmployeeData().new_user_firstname + ' ' + EmployeeData().new_user_lastname)
-            time.sleep(3)
-            search_button = self.wait.until(
-                EC.presence_of_element_located(
-                    (By.XPATH, DashboardPageLocators().search_locator)))
-            search_button.click()
-            time.sleep(3)
+            self.search_employee(EmployeeData().add_user_firstname, EmployeeData().add_user_lastname)
             edit_icon = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().edit_icon_locator)))
             edit_icon.click()
             time.sleep(5)
             nickname_input = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().nickname_locator)))
-            nickname_input.clear()
             nickname_input.send_keys(EmployeeData().user_nickname)
+
             driver_license_input = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().driver_license_locator)))
-            driver_license_input.clear()
             driver_license_input.send_keys(EmployeeData().user_driver_license)
 
             ssn_input = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().ssn_locator)))
-            ssn_input.clear()
-
             ssn_input.send_keys(EmployeeData().user_ssn)
 
             nationality = self.wait.until(EC.element_to_be_clickable(
@@ -137,30 +118,28 @@ class OrangeHRM:
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().edit_save_button_locator)))
 
             editpage_save_button.click()
-
         except NoSuchElementException:
             print('Some of the elements are missing!')
 
-    def delete_employee(self):
+    def search_employee(self, first_name, last_name):
+        pim_option = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, DashboardPageLocators().pim_locator)))
+        pim_option.click()
+        time.sleep(3)
+        employee_name_input = self.wait.until(
+            EC.presence_of_element_located((By.XPATH, DashboardPageLocators().employee_name_locator)))
+        employee_name_input.click()
+        employee_name_input.send_keys(first_name + ' ' + last_name)
+        time.sleep(3)
+        search_button = self.wait.until(
+            EC.presence_of_element_located(
+                (By.XPATH, DashboardPageLocators().search_locator)))
+        search_button.click()
+        time.sleep(3)
+
+    def delete_employee(self, first_name, last_name):
         try:
-            pim_option = self.wait.until(
-                EC.presence_of_element_located((By.XPATH, DashboardPageLocators().pim_locator)))
-            pim_option.click()
-            # employee_list_option = self.wait.until(
-            #     EC.presence_of_element_located((By.XPATH, DashboardPageLocators().employee_list_locator)))
-            # employee_list_option.click()
-            time.sleep(3)
-            employee_name_input = self.wait.until(
-                EC.presence_of_element_located((By.XPATH, DashboardPageLocators().employee_name_locator)))
-            employee_name_input.send_keys(EmployeeData().new_user_firstname + ' ' + EmployeeData().new_user_lastname)
-
-            search_button = self.wait.until(
-                EC.presence_of_element_located(
-                    (By.XPATH, DashboardPageLocators().search_locator)))
-
-            search_button.click()
-            time.sleep(5)
-
+            self.search_employee(first_name, last_name)
             delete_icon = self.wait.until(
                 EC.presence_of_element_located((By.XPATH, DashboardPageLocators().delete_icon_locator)))
             delete_icon.click()

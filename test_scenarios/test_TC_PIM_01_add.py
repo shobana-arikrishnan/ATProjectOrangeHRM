@@ -5,7 +5,7 @@ from selenium import webdriver
 from selenium.webdriver.firefox.service import Service
 from webdriver_manager.firefox import GeckoDriverManager
 
-from data.orangehrm_page_data import LoginPageData
+from data.orangehrm_page_data import LoginPageData, EmployeeData
 from scenarios.orangehrm import OrangeHRM
 
 
@@ -21,11 +21,17 @@ class TestAddEmployee:
     def web_page(self, driver):
         yield OrangeHRM(self.driver)
 
-    # TC_PIM_01 - TestCase to add new employee
-    def test_add_employee(self, web_page):
+    @pytest.fixture
+    def setup_web_page(self, web_page):
         web_page.browse()
         web_page.login(LoginPageData().login_username, LoginPageData().login_password)
-        web_page.add_employee()
+        yield web_page
+        web_page.delete_employee(EmployeeData().new_user_firstname, EmployeeData().new_user_lastname)
+
+    # TC_PIM_01 - TestCase to add new employee
+    def test_add_employee(self, setup_web_page):
+        setup_web_page.add_employee(EmployeeData.new_user_firstname, EmployeeData.new_user_middlename,
+                                    EmployeeData.new_user_lastname, EmployeeData.new_user_username)
         time.sleep(5)
         look_for = 'viewPersonalDetails/empNumber'
         actual_url = self.driver.current_url
